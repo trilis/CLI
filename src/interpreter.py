@@ -59,10 +59,15 @@ class ExternalCommand(Command):
         self.args = args
 
     def launch(self, input_text):
-        r, w = os.pipe()
-        process = subprocess.Popen(self.args, stdin=io.StringIO(input_text), stdout=w)
-        process.wait()
-        return r.read()
+        # process = subprocess.Popen(self.args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        # process.stdin.write(input_text)
+        # process.wait()
+        # process.close()
+        # res = process.communicate()
+        # return res[0]
+        process = subprocess.run(self.args, input=input_text.encode(), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 check=True)
+        return process.stdout.decode().rstrip()
 
 
 def perform(commands_parts):
