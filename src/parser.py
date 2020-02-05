@@ -3,6 +3,11 @@ from src import enviroment
 
 
 def find_quotes(string):
+    """
+    finds unquoted quotes in string
+    :param string: string
+    :return: list of tuples (i, j, type) where s[i], s[j] - quotes, type - "s" or "d", according to the type of quotes
+    """
     ans = []
     suffix = string
     offset = 0
@@ -24,6 +29,13 @@ def find_quotes(string):
 
 
 def tokenize(string, token, double_quotes_respect=True):
+    """
+    splits string by token if it is not in quotes
+    :param string: string
+    :param token: token, can be regular expression
+    :param double_quotes_respect: if False, token in double quotes is also used as a separator
+    :return: list of substrings
+    """
     token_inds = [s.start() for s in re.finditer(token, string)]
     quotes = find_quotes(string)
 
@@ -35,6 +47,11 @@ def tokenize(string, token, double_quotes_respect=True):
 
 
 def insert_vars(string):
+    """
+    inserts values of variables
+    :param string: string with $x
+    :return: string with value(x) instead $x
+    """
     parts = tokenize(string, "\$\w+", double_quotes_respect=False)
     answer = parts[0]
     for part in parts[1:]:
@@ -44,6 +61,11 @@ def insert_vars(string):
 
 
 def peel(word):
+    """
+    removes extra quotes
+    :param word: string
+    :return: string without extra quotes
+    """
     quotes = find_quotes(word)
     quotes_inds = []
     for q in quotes:
@@ -52,6 +74,11 @@ def peel(word):
 
 
 def parse(string):
+    """
+    parses string: splits by pipelines, then inserts variables and splits by spaces
+    :param string: string
+    :return: list of lists of strings: parts for each command
+    """
     commands = tokenize(string, "\|")
     commands = [insert_vars(c) for c in commands]
     commands_parts = [[peel(w) for w in tokenize(c, "\s") if w != ""] for c in commands]

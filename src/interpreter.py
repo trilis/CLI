@@ -6,6 +6,11 @@ from src.commands import *
 
 
 def get_command(args):
+    """
+    return Command instance according to the command
+    :param args: arguments
+    :return: Command instance
+    """
     if args == []:
         return EmptyCommand()
     first = args[0]
@@ -13,8 +18,8 @@ def get_command(args):
     if m:
         return AssignmentCommand(m.group(1), m.group(2))
     builtins = {
-        # "echo": echo,
-        # "cat": cat,
+        "echo": echo,
+        "cat": cat,
         "wc": wc,
         "pwd": pwd,
         "exit": exit_
@@ -59,18 +64,17 @@ class ExternalCommand(Command):
         self.args = args
 
     def launch(self, input_text):
-        # process = subprocess.Popen(self.args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        # process.stdin.write(input_text)
-        # process.wait()
-        # process.close()
-        # res = process.communicate()
-        # return res[0]
         process = subprocess.run(self.args, input=input_text.encode(), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                  check=True)
-        return process.stdout.decode().rstrip()
+        return process.stdout.decode()
 
 
 def perform(commands_parts):
+    """
+    performs sequential execution of commands
+    :param commands_parts: output of parse method
+    :return: output of last command
+    """
     commands = [get_command(args) for args in commands_parts]
     input_text = ""
     for command in commands:

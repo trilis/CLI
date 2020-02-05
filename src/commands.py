@@ -2,11 +2,23 @@ import os
 import io
 
 
-def echo(args, input_text):
+def echo(args, input_text=""):
+    """
+    prints arguments
+    :param args: arguments
+    :param input_text: not used
+    :return: arguments separated by space
+    """
     return " ".join(args) + "\n"
 
 
-def cat(args, input_text):
+def cat(args, input_text=""):
+    """
+    print file(s) content
+    :param args: files
+    :param input_text: printed text if args=[]
+    :return: files content
+    """
     if args == []:
         return input_text
     else:
@@ -17,7 +29,13 @@ def cat(args, input_text):
         return answer
 
 
-def wc(args, input_text):
+def wc(args, input_text=""):
+    """
+    prints lines number, words number and bytes number of the file
+    :param args: files
+    :param input_text: used if files=[]
+    :return: lines words bytes filename
+    """
     def simple_wc(file):
         with open(file, "r") as input:
             lines = input.readlines()
@@ -41,9 +59,21 @@ def wc(args, input_text):
         return answer
 
 
-def pwd(args, input_text):
+def pwd(args, input_text=""):
+    """
+    prints current directory
+    :param args: not used
+    :param input_text: not used
+    :return: path to current directory
+    """
     return os.path.abspath(os.getcwd()) + "\n"
 
 
-def exit_(args, input_text):
+def exit_(args, input_text=""):
+    """
+    exit programm
+    :param args: not used
+    :param input_text: not used
+    :return: exits
+    """
     exit(0)
