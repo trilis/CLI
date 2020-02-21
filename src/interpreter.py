@@ -66,7 +66,7 @@ class ExternalCommand(Command):
 
     def launch(self, context, input_text):
         process = subprocess.run(self.args, input=input_text.encode(), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                 check=True)
+                                 check=True, cwd=context.get_current_path())
         return process.stdout.decode()
 
 
