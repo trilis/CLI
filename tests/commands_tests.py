@@ -5,7 +5,7 @@ from src.commands import *
 
 class TestCommands(unittest.TestCase):
     def test_echo(self):
-        self.assertEqual("a b c", echo(["a", "b", "c"]))
+        self.assertEqual("a b c\n", echo(["a", "b", "c"]))
 
     def test_cat(self):
         file = tempfile.NamedTemporaryFile("w")
