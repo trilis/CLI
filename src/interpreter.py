@@ -1,5 +1,4 @@
 import re
-import sys
 import subprocess
 from src import enviroment
 from src.commands import *
@@ -20,6 +19,8 @@ def get_command(args):
     builtins = {
         "echo": echo,
         "cat": cat,
+        "cd": cd,
+        "ls": ls,
         "wc": wc,
         "pwd": pwd,
         "exit": exit_
@@ -31,12 +32,12 @@ def get_command(args):
 
 
 class Command:
-    def launch(self, input_text):
+    def launch(self, context, input_text):
         raise NotImplementedError
 
 
 class EmptyCommand(Command):
-    def launch(self, input_text):
+    def launch(self, context, input_text):
         return input_text
 
 
@@ -45,7 +46,7 @@ class AssignmentCommand(Command):
         self.name = name
         self.value = value
 
-    def launch(self, input_text):
+    def launch(self, context, input_text):
         enviroment.add_value(self.name, self.value)
         return ""
 
@@ -55,21 +56,21 @@ class BuiltInCommand(Command):
         self.function = command_function
         self.args = args
 
-    def launch(self, input_text):
-        return self.function(self.args, input_text)
+    def launch(self, context, input_text):
+        return self.function(self.args, context, input_text)
 
 
 class ExternalCommand(Command):
     def __init__(self, args):
         self.args = args
 
-    def launch(self, input_text):
+    def launch(self, context, input_text):
         process = subprocess.run(self.args, input=input_text.encode(), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                 check=True)
+                                 check=True, cwd=context.get_current_path())
         return process.stdout.decode()
 
 
-def perform(commands_parts):
+def perform(commands_parts, context):
     """
     performs sequential execution of commands
     :param commands_parts: output of parse method
@@ -79,7 +80,7 @@ def perform(commands_parts):
     input_text = ""
     for command in commands:
         try:
-            input_text = command.launch(input_text)
+            input_text = command.launch(context, input_text)
         except Exception as e:
             print(e)
     return input_text

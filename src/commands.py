@@ -1,18 +1,21 @@
 import os
 import io
 
+from src.context import Context
 
-def echo(args, input_text=""):
+
+def echo(args, context=Context(), input_text=""):
     """
     prints arguments
     :param args: arguments
+    :param context: not used
     :param input_text: not used
     :return: arguments separated by space
     """
     return " ".join(args) + "\n"
 
 
-def cat(args, input_text=""):
+def cat(args, context=Context(), input_text=""):
     """
     print file(s) content
     :param args: files
@@ -24,18 +27,19 @@ def cat(args, input_text=""):
     else:
         answer = ""
         for file in args:
-            with open(file, "r") as input:
+            with open(context.resolve_path(file), "r") as input:
                 answer += input.read()
         return answer
 
 
-def wc(args, input_text=""):
+def wc(args, context=Context(), input_text=""):
     """
     prints lines number, words number and bytes number of the file
     :param args: files
     :param input_text: used if files=[]
     :return: lines words bytes filename
     """
+
     def simple_wc(file):
         with open(file, "r") as input:
             lines = input.readlines()
@@ -55,25 +59,42 @@ def wc(args, input_text=""):
     else:
         answer = ""
         for file in args:
-            answer += simple_wc(file)
+            answer += simple_wc(context.resolve_path(file))
         return answer
 
 
-def pwd(args, input_text=""):
+def pwd(args, context=Context(), input_text=""):
     """
     prints current directory
     :param args: not used
     :param input_text: not used
     :return: path to current directory
     """
-    return os.path.abspath(os.getcwd()) + "\n"
+    return context.get_current_path() + "\n"
 
 
-def exit_(args, input_text=""):
+def exit_(args, context=Context(), input_text=""):
     """
-    exit programm
+    exit program
     :param args: not used
+    :param context: not used
     :param input_text: not used
     :return: exits
     """
     exit(0)
+
+
+def cd(args, context=Context(), input_text=""):
+    if args:
+        context.change_directory(args[0])
+    else:
+        context.set_path_to_home()
+    return ""
+
+
+def ls(args, context=Context(), input_text=""):
+    if args:
+        path = context.resolve_path(args[0])
+    else:
+        path = context.get_current_path()
+    return "\n".join(sorted(os.listdir(path)))
