@@ -97,4 +97,4 @@ def ls(args, context=Context(), input_text=""):
         path = context.resolve_path(args[0])
     else:
         path = context.get_current_path()
-    return "\n".join(os.listdir(path))
+    return "\n".join(sorted(os.listdir(path)))

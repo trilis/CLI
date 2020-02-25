@@ -8,7 +8,7 @@ class Context:
         return self.__current_path
 
     def change_directory(self, next_folder):
-        new_path = self.__current_path + "/" + next_folder
+        new_path = self.resolve_path(next_folder)
         if os.path.isdir(new_path):
             self.__current_path = os.path.abspath(new_path)
         else:
